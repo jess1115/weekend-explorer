@@ -1,0 +1,30 @@
+.featured-activities {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 80px 24px;
+    text-align: center;
+}
+
+.featured-activities h2 {
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--color-text);
+}
+
+.featured-activities p {
+    margin: var(--spacing-md);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 640px) {
+    .activity-grid {
+        grid-template-columns: 1fr;
+    }
+}

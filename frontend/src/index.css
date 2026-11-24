@@ -1,0 +1,69 @@
+/* Global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base styles */
+:root {
+  /* Colors */
+  --color-background: #F7F4ED;
+  --color-surface: #FFFFFF;
+  --color-primary: #596B43;
+  --color-secondary: #B96F54;
+  --color-accent: #E8E1D5;
+  --color-text: #302F2A;
+  --color-text-muted: #817D73;
+  --color-border: #E5E0D6;
+
+  /* Typography */
+  --font-heading: 'Young Serif';
+  --font-body: 'Lora';
+  font-family: var(--font-body), serif;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  font-synthesis: none;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+
+  /* Layout */
+  --container-width: 1200px;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+.brand-name {
+  font-family: var(--font-heading), serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: var(--font-body), serif;
+}
+
+button {
+  cursor: pointer;
+}
