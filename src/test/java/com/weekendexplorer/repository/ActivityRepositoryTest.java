@@ -65,8 +65,8 @@ public class ActivityRepositoryTest {
     }
 
     @Test
-    void filterActivities_shouldReturnOutdoorActivities(){
-        List<Activity> filteredActivities = activityRepository.filterActivities(Set.of(ActivityCategory.LEISURE),
+    void filterActivitiesWithTags_shouldReturnOutdoorActivities(){
+        List<Activity> filteredActivities = activityRepository.filterActivitiesWithTags(Set.of(ActivityCategory.LEISURE),
                 500, 3, Environment.OUTDOOR);
         assertEquals(3, filteredActivities.size());
         assertEquals(List.of("Riverside Cycling", "Sunset Beach Walk", "Botanical Garden Walk"),
@@ -74,21 +74,21 @@ public class ActivityRepositoryTest {
     }
 
     @Test
-    void filterActivities_shouldReturnAllActivitiesWhenCategoryAndEnvironmentAreNull(){
-        List<Activity> filteredActivities = activityRepository.filterActivities(null, 900, 5, null);
+    void filterActivitiesWithTags_shouldReturnAllActivitiesWhenCategoryAndEnvironmentAreNull(){
+        List<Activity> filteredActivities = activityRepository.filterActivitiesWithTags(null, 900, 5, null);
         assertEquals(10, filteredActivities.size());
     }
 
     @Test
-    void filterActivities_shouldReturnEmptyListWhenNoActivityMatches(){
-        List<Activity> filteredActivities = activityRepository.filterActivities(Set.of(ActivityCategory.EXHIBITION),
+    void filterActivitiesWithTags_shouldReturnEmptyListWhenNoActivityMatches(){
+        List<Activity> filteredActivities = activityRepository.filterActivitiesWithTags(Set.of(ActivityCategory.EXHIBITION),
                 50, 1, Environment.INDOOR);
         assertEquals(0, filteredActivities.size());
     }
 
     @Test
-    void filterActivities_shouldIncludeActivitiesAtBoundaryValues(){
-        List<Activity> filteredActivities = activityRepository.filterActivities(null, 150,
+    void filterActivitiesWithTags_shouldIncludeActivitiesAtBoundaryValues(){
+        List<Activity> filteredActivities = activityRepository.filterActivitiesWithTags(null, 150,
                 3, Environment.OUTDOOR);
         assertEquals(3, filteredActivities.size());
         assertEquals(List.of("Riverside Cycling", "Sunset Beach Walk", "Botanical Garden Walk"),
@@ -96,8 +96,8 @@ public class ActivityRepositoryTest {
     }
 
     @Test
-    void filterActivities_shouldSupportMultipleCategories() {
-        List<Activity> filteredActivities = activityRepository.filterActivities(
+    void filterActivitiesWithTags_shouldSupportMultipleCategories() {
+        List<Activity> filteredActivities = activityRepository.filterActivitiesWithTags(
                 Set.of(ActivityCategory.HANDMADE, ActivityCategory.EXHIBITION),
                 800, 4, Environment.INDOOR);
 
@@ -107,8 +107,8 @@ public class ActivityRepositoryTest {
     }
 
     @Test
-    void filterActivities_shouldNotFilterByPriceWhenPriceIsNull() {
-        List<Activity> filteredActivities = activityRepository.filterActivities(
+    void filterActivitiesWithTags_shouldNotFilterByPriceWhenPriceIsNull() {
+        List<Activity> filteredActivities = activityRepository.filterActivitiesWithTags(
                 null, null, 4, Environment.INDOOR);
 
         assertEquals(6, filteredActivities.size());

@@ -1,6 +1,7 @@
 package com.weekendexplorer.service;
 
 import com.weekendexplorer.data.ServiceTestActivityData;
+import com.weekendexplorer.dto.ActivityRecommendationResponse;
 import com.weekendexplorer.dto.QuizCriteria;
 import com.weekendexplorer.exception.ActivityNotFoundException;
 import com.weekendexplorer.model.Activity;
@@ -33,7 +34,7 @@ public class ActivityServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(activityRepository.findAll())
+        when(activityRepository.findAllWithTags())
                 .thenReturn(ServiceTestActivityData.getActivities());
         activityService = new ActivityService(activityRepository);
     }
@@ -65,7 +66,7 @@ public class ActivityServiceTest {
     void recommendActivities_shouldReturnZeroScoresWhenInterestsAreEmpty(){
         Set<String> interests = Set.of();
         List<ActivityRecommendation> recommendedActivities =
-                activityService.recommendActivities(ServiceTestActivityData.getActivities(),interests);;
+                activityService.recommendActivities(ServiceTestActivityData.getActivities(),interests);
 
         assertEquals(List.of(0,0,0,0,0,0,0,0,0,0), recommendedActivities.stream().map(ActivityRecommendation::getScore).toList());
     }
@@ -73,7 +74,7 @@ public class ActivityServiceTest {
     @Test
     void getAllActivities_shouldReturnActivitiesWithUnmodifiableTags(){
         assertThrows(UnsupportedOperationException.class, () ->
-                activityService.getAllActivities().getFirst().getTags().add("nature"));
+                activityService.getAllActivities().getFirst().tags().add("nature"));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class ActivityServiceTest {
     void filterActivities_shouldTreatEmptyCategoriesAsNull() {
         activityService.filterActivities(Set.of(), 800, 4, Environment.INDOOR);
 
-        verify(activityRepository).filterActivities(null, 800, 4, Environment.INDOOR);
+        verify(activityRepository).filterActivitiesWithTags(null, 800, 4, Environment.INDOOR);
     }
 
     @Test
@@ -120,24 +121,24 @@ public class ActivityServiceTest {
                 Set.of("peaceful")
         );
 
-        when(activityRepository.filterActivities(
+        when(activityRepository.filterActivitiesWithTags(
                 any(), any(), anyInt(), any()
         )).thenReturn(ServiceTestActivityData.getActivities());
 
-        List<ActivityRecommendation> recommendedActivities =
+        List<ActivityRecommendationResponse> recommendedActivities =
                 activityService.recommendActivitiesBasedOnQuiz(quizCriteria);
 
         assertEquals(
                 List.of(6, 3, 4, 1, 8, 5, 7, 10, 2, 9),
                 recommendedActivities.stream()
-                        .map(r -> r.getActivity().getId())
+                        .map(r -> r.activity().id())
                         .toList()
         );
 
         assertEquals(
                 List.of(8, 7, 7, 5, 4, 2, 2, 2, 0, 0),
                 recommendedActivities.stream()
-                        .map(ActivityRecommendation::getScore)
+                        .map(ActivityRecommendationResponse::score)
                         .toList()
         );
     }

@@ -1,6 +1,8 @@
 package com.weekendexplorer.controller;
 
 import com.weekendexplorer.data.ServiceTestActivityData;
+import com.weekendexplorer.dto.ActivityRecommendationResponse;
+import com.weekendexplorer.dto.ActivityResponse;
 import com.weekendexplorer.dto.QuizCriteria;
 import com.weekendexplorer.exception.ActivityNotFoundException;
 import com.weekendexplorer.model.Activity;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,11 +38,31 @@ public class ActivityControllerTest {
     @MockitoBean
     private ActivityService activityService;
 
+    private ActivityResponse toActivityResponse(Activity activity) {
+        return new ActivityResponse(
+                activity.getId(),
+                activity.getName(),
+                activity.getCategory(),
+                activity.getPrice(),
+                activity.getDurationHours(),
+                activity.getEnvironment(),
+                activity.getTags(),
+                activity.getDescription()
+        );
+    }
+
+    private List<ActivityResponse> toActivityResponses(List<Activity> activities) {
+        return activities.stream()
+                .map(this::toActivityResponse)
+                .toList();
+    }
+
     @Test
     void getActivities_shouldReturnAllActivities() throws Exception {
-        List<Activity> activities = ServiceTestActivityData.getActivities();
+        List<ActivityResponse> responses =
+                toActivityResponses(ServiceTestActivityData.getActivities());
 
-        when(activityService.getAllActivities()).thenReturn(activities);
+        when(activityService.getAllActivities()).thenReturn(responses);
 
         mockMvc.perform(get("/api/activities"))
                 .andExpect(status().isOk())
@@ -51,14 +74,16 @@ public class ActivityControllerTest {
 
     @Test
     void filterActivities_shouldReturnFilteredActivities() throws Exception {
-        List<Activity> activities = List.of(ServiceTestActivityData.getActivities().getFirst());
+        List<ActivityResponse> responses = toActivityResponses(
+                List.of(ServiceTestActivityData.getActivities().getFirst())
+        );
 
         when(activityService.filterActivities(
                 Set.of(ActivityCategory.HANDMADE),
                 800,
                 3,
                 Environment.INDOOR
-        )).thenReturn(activities);
+        )).thenReturn(responses);
 
         mockMvc.perform(get("/api/activities/filter")
                         .param("categories", "HANDMADE")
@@ -79,12 +104,16 @@ public class ActivityControllerTest {
 
     @Test
     void filterActivities_shouldPassMultipleCategoriesToService() throws Exception {
+        List<ActivityResponse> responses = toActivityResponses(
+                List.of(ServiceTestActivityData.getActivities().getFirst())
+        );
+
         when(activityService.filterActivities(
                 Set.of(ActivityCategory.HANDMADE, ActivityCategory.EXHIBITION),
                 800,
                 4,
                 Environment.INDOOR
-        )).thenReturn(List.of(ServiceTestActivityData.getActivities().getFirst()));
+        )).thenReturn(responses);
 
         mockMvc.perform(get("/api/activities/filter")
                         .param("price", "800")
@@ -117,7 +146,8 @@ public class ActivityControllerTest {
                         .param("hours", "4")
                         .param("categories", "EXERCISE")
                         .param("env", "OUTDOOR"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
 
         verify(activityService).filterActivities(
                 Set.of(ActivityCategory.EXERCISE),
@@ -345,6 +375,31 @@ public class ActivityControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void recommendActivities_shouldReturnRecommendationResponse() throws Exception {
+        ActivityResponse activity = toActivityResponse(
+                ServiceTestActivityData.getActivities().getFirst()
+        );
+
+        ActivityRecommendationResponse recommendation =
+                new ActivityRecommendationResponse(activity, 5);
+
+        when(activityService.findRecommendedActivities(
+                any(), any(), anyInt(), any(), any()
+        )).thenReturn(List.of(recommendation));
+
+        mockMvc.perform(get("/api/activities/recommend")
+                        .param("price", "700")
+                        .param("hours", "3")
+                        .param("categories", "HANDMADE")
+                        .param("env", "INDOOR")
+                        .param("interests", "creativity"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].score").value(5))
+                .andExpect(jsonPath("$[0].activity.id").value(activity.id()))
+                .andExpect(jsonPath("$[0].activity.name").value(activity.name()));
     }
 
 }

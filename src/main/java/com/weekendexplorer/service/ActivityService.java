@@ -1,5 +1,7 @@
 package com.weekendexplorer.service;
 
+import com.weekendexplorer.dto.ActivityRecommendationResponse;
+import com.weekendexplorer.dto.ActivityResponse;
 import com.weekendexplorer.dto.QuizCriteria;
 import com.weekendexplorer.exception.ActivityNotFoundException;
 import com.weekendexplorer.model.Activity;
@@ -22,13 +24,34 @@ public class ActivityService {
         this.activityRepository = activityRepository;
     }
 
-    public List<Activity> getAllActivities() { return activityRepository.findAll(); }
+    public List<ActivityResponse> getAllActivities() {
+        return activityRepository.findAllWithTags()
+                .stream()
+                .map(this::toActivityResponse)
+                .toList();
+    }
 
-    public List<Activity> filterActivities(Set<ActivityCategory> categories, Integer price, int hours, Environment env) {
+    private List<Activity> filterActivitiesInternal(Set<ActivityCategory> categories, Integer price, int hours, Environment env) {
+
         if (categories != null && categories.isEmpty()) categories = null;
+
         if ((price != null && price < 0) || hours < 0) throw new IllegalArgumentException();
 
-        return activityRepository.filterActivities(categories, price, hours, env);
+        return activityRepository.filterActivitiesWithTags(
+                categories, price, hours, env
+        );
+    }
+
+    public List<ActivityResponse> filterActivities(
+            Set<ActivityCategory> categories,
+            Integer price,
+            int hours,
+            Environment env) {
+
+        return filterActivitiesInternal(categories, price, hours, env)
+                .stream()
+                .map(this::toActivityResponse)
+                .toList();
     }
 
     private int calculateMatchScore(Set<String> interests, Set<String> tags) {
@@ -57,16 +80,22 @@ public class ActivityService {
         return activityRecommendations;
     }
 
-    public List<ActivityRecommendation> findRecommendedActivities(Set<ActivityCategory> categories, Integer price, int hours,
+    public List<ActivityRecommendationResponse> findRecommendedActivities(Set<ActivityCategory> categories, Integer price, int hours,
                                                                        Environment env, Set<String> interests) {
 
-        return recommendActivities(filterActivities(categories, price, hours, env), interests);
+        return recommendActivities(filterActivitiesInternal(categories, price, hours, env), interests)
+                .stream()
+                .map(this::toRecommendationResponse)
+                .toList();
     }
 
-    public Activity getActivityById(int id) {
+    public ActivityResponse getActivityById(int id) {
 
-        return activityRepository.findById(id)
-                .orElseThrow(() -> new ActivityNotFoundException("Activity not found with ID: " + id));
+        Activity activity = activityRepository.findById(id)
+                .orElseThrow(() -> new ActivityNotFoundException(
+                        "Activity not found with ID: " + id));
+
+        return toActivityResponse(activity);
     }
 
     private int calculateQuizMatchScore(Activity activity, QuizCriteria quizCriteria) {
@@ -90,8 +119,8 @@ public class ActivityService {
         return score;
     }
 
-    public List<ActivityRecommendation> recommendActivitiesBasedOnQuiz(QuizCriteria quizCriteria) {
-        List<Activity> filteredActivities = filterActivities(null, quizCriteria.getMaxPrice(),
+    public List<ActivityRecommendationResponse> recommendActivitiesBasedOnQuiz(QuizCriteria quizCriteria) {
+        List<Activity> filteredActivities = filterActivitiesInternal(null, quizCriteria.getMaxPrice(),
                 quizCriteria.getMaxDuration(), quizCriteria.getEnvironment());
 
         List<ActivityRecommendation> activityRecommendations = new ArrayList<>();
@@ -103,7 +132,10 @@ public class ActivityService {
             activityRecommendations.add(activityRecommendation);
         }
         activityRecommendations.sort((a,b) -> Integer.compare(b.getScore(), a.getScore()));
-        return activityRecommendations;
+        return activityRecommendations
+                .stream()
+                .map(this::toRecommendationResponse)
+                .toList();
     }
 
     @Transactional
@@ -113,6 +145,28 @@ public class ActivityService {
 
     public boolean hasActivities() {
         return activityRepository.count() > 0;
+    }
+
+    private ActivityResponse toActivityResponse(Activity activity) {
+        return new ActivityResponse(
+                activity.getId(),
+                activity.getName(),
+                activity.getCategory(),
+                activity.getPrice(),
+                activity.getDurationHours(),
+                activity.getEnvironment(),
+                activity.getTags(),
+                activity.getDescription()
+        );
+    }
+
+    private ActivityRecommendationResponse toRecommendationResponse(
+            ActivityRecommendation recommendation) {
+
+        return new ActivityRecommendationResponse(
+                toActivityResponse(recommendation.getActivity()),
+                recommendation.getScore()
+        );
     }
 
 }

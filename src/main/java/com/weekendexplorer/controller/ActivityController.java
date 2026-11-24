@@ -1,5 +1,7 @@
 package com.weekendexplorer.controller;
 
+import com.weekendexplorer.dto.ActivityRecommendationResponse;
+import com.weekendexplorer.dto.ActivityResponse;
 import com.weekendexplorer.dto.QuizCriteria;
 import com.weekendexplorer.dto.QuizRequest;
 import com.weekendexplorer.mapper.QuizAnswerMapper;
@@ -61,7 +63,7 @@ public class ActivityController {
             )
     })
     @GetMapping("/api/activities")
-    public List<Activity> getActivities() {
+    public List<ActivityResponse> getActivities() {
         return activityService.getAllActivities();
     }
 
@@ -97,7 +99,7 @@ public class ActivityController {
             )
     })
     @GetMapping("/api/activities/filter")
-    public List<Activity> filterActivities(
+    public List<ActivityResponse> filterActivities(
             @Parameter(
                     description = "Maximum activity price",
                     example = "300",
@@ -164,7 +166,7 @@ public class ActivityController {
             )
     })
     @GetMapping("/api/activities/recommend")
-    public List<ActivityRecommendation> recommendActivities(
+    public List<ActivityRecommendationResponse> recommendActivities(
             @Parameter(
                     description = "Maximum activity price",
                     example = "300",
@@ -245,7 +247,7 @@ public class ActivityController {
             )
     })
     @GetMapping("/api/activities/{id}")
-    public Activity getActivity(
+    public ActivityResponse getActivity(
             @Parameter(
             description = "ID of the activity",
             example = "1",
@@ -315,7 +317,7 @@ public class ActivityController {
             )
     })
     @PostMapping("/api/activities/recommend/quiz")
-    public List<ActivityRecommendation> recommendActivitiesBasedOnQuiz(@Valid @RequestBody QuizRequest request){
+    public List<ActivityRecommendationResponse> recommendActivitiesBasedOnQuiz(@Valid @RequestBody QuizRequest request){
         QuizCriteria quizCriteria = QuizAnswerMapper.mapAnswers(request);
         return activityService.recommendActivitiesBasedOnQuiz(quizCriteria);
     }
