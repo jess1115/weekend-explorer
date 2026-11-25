@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
@@ -39,6 +40,14 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
             @Param("hours") int hours,
             @Param("env") Environment env
     );
+
+    @Query("""
+    SELECT DISTINCT a
+    FROM Activity a
+    LEFT JOIN FETCH a.tags
+    WHERE a.id = :id
+""")
+    Optional<Activity> findByIdWithTags(@Param("id") Integer id);
 
 }
 

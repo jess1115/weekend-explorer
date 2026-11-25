@@ -99,7 +99,7 @@ public class ActivityServiceTest {
 
     @Test
     void getActivityById_shouldThrowExceptionWhenActivityNotFound() {
-        when(activityRepository.findById(99))
+        when(activityRepository.findByIdWithTags(99))
                 .thenReturn(Optional.empty());
 
         assertThrows(ActivityNotFoundException.class,

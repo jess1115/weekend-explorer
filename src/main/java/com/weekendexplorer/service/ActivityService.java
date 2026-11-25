@@ -91,7 +91,7 @@ public class ActivityService {
 
     public ActivityResponse getActivityById(int id) {
 
-        Activity activity = activityRepository.findById(id)
+        Activity activity = activityRepository.findByIdWithTags(id)
                 .orElseThrow(() -> new ActivityNotFoundException(
                         "Activity not found with ID: " + id));
 

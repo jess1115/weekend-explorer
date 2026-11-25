@@ -46,21 +46,21 @@ public class ActivityRepositoryTest {
 
         Activity savedActivity = activityRepository.save(activity);
         int id = savedActivity.getId();
-        Optional<Activity> result = activityRepository.findById(id);
+        Optional<Activity> result = activityRepository.findByIdWithTags(id);
         assertTrue(result.isPresent());
         assertEquals("Pottery Workshop", result.get().getName());
         assertEquals(Set.of("creativity", "relaxing"), result.get().getTags());
     }
 
     @Test
-    void findById_shouldReturnEmptyWhenActivityDoesNotExist() {
-        Optional<Activity> result = activityRepository.findById(99);
+    void findByIdWithTags_shouldReturnEmptyWhenActivityDoesNotExist() {
+        Optional<Activity> result = activityRepository.findByIdWithTags(99);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void findAll_shouldReturnAllActivities() {
-        List<Activity> activities = activityRepository.findAll();
+    void findAllWithTags_shouldReturnAllActivities() {
+        List<Activity> activities = activityRepository.findAllWithTags();
         assertEquals(10, activities.size());
     }
 
