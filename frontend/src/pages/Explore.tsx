@@ -26,7 +26,7 @@ function Explore() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [maxPrice, setMaxPrice] = useState(Number(searchParams.get('price') ?? 2000));
-    const [maxDuration, setMaxDuration] = useState(Number(searchParams.get('hours')) ?? 6);
+    const [maxDuration, setMaxDuration] = useState(Number(searchParams.get('hours')) || 6);
     const [selectedCategories, setSelectedCategories] = useState<string[]>(searchParams.getAll('category'));
     const [selectedEnvironments, setSelectedEnvironments] =
         useState<string[]>(searchParams.get('env') ? [searchParams.get('env')!] : []);
