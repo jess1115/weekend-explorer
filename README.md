@@ -24,19 +24,22 @@ Weekend Explorer allows users to browse and filter activities, receive personali
 ## Screenshots
 
 ### Home
-![Home Screenshot](docs/images/home.png)
+![Home](docs/images/home.png)
 
 ### Explore Activities
-![Explore Screenshot](docs/images/explore.png)
+![Explore Activities](docs/images/explore.png)
 
 ### Recommendation Quiz
-![Recommendation Quiz Screenshot](docs/images/recommendation_quiz.png)
+![Recommendation Quiz](docs/images/recommendation_quiz.png)
 
 ### Recommendation Results
-![Recommendation Results Screenshot](docs/images/recommendation_result.png)
+![Recommendation Results](docs/images/recommendation_result.png)
+
+### Activity Detail
+![Activity Detail](docs/images/activity_detail.png)
 
 ### Saved Activities
-![Saved Screenshot](docs/images/saved.png)
+![Saved Activities](docs/images/saved.png)
 
 ## Features
 
