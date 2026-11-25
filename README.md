@@ -24,22 +24,34 @@ Weekend Explorer allows users to browse and filter activities, receive personali
 ## Screenshots
 
 ### Home
-![Home](docs/images/home.png)
+<p align="center">
+  <img src="docs/images/home.png" alt="Home" width="800" />
+</p>
 
 ### Explore Activities
-![Explore Activities](docs/images/explore.png)
+<p align="center">
+  <img src="docs/images/explore.png" alt="Explore Activities" width="800" />
+</p>
 
 ### Recommendation Quiz
-![Recommendation Quiz](docs/images/recommendation_quiz.png)
+<p align="center">
+  <img src="docs/images/recommendation_quiz.png" alt="Recommendation Quiz" width="800" />
+</p>
 
 ### Recommendation Results
-![Recommendation Results](docs/images/recommendation_result.png)
+<p align="center">
+  <img src="docs/images/recommendation_result.png" alt="Recommendation Results" width="800" />
+</p>
 
 ### Activity Detail
-![Activity Detail](docs/images/activity_detail.png)
+<p align="center">
+  <img src="docs/images/activity_detail.png" alt="Activity Detail" width="800" />
+</p>
 
 ### Saved Activities
-![Saved Activities](docs/images/saved.png)
+<p align="center">
+  <img src="docs/images/saved.png" alt="Saved Activities" width="800" />
+</p>
 
 ## Features
 
@@ -59,8 +71,9 @@ Weekend Explorer allows users to browse and filter activities, receive personali
 | **Deployment & Infrastructure** | Docker, Render, Vercel, Aiven |
 
 ## System Architecture
-
-![System Architecture](docs/images/architecture.png)
+<p align="center">
+  <img src="docs/images/architecture.png" alt="System Architecture" width="500" />
+</p>
 
 ## API Overview
 
